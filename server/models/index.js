@@ -20,13 +20,29 @@ var sequelize = process.env.DATABASE_URL
       {
         host: process.env.DB_HOST,
         dialect: process.env.DIALECT,
-      }
+        ssl: true,
+        dialectOptions: {
+           ssl: {
+              require: true
+           }
+         }        
+      },
     ))
   : (sequelize = new Sequelize(
       config.database,
       config.username,
       config.password,
-      config
+      config,
+      {
+        host: process.env.DB_HOST,
+        dialect: process.env.DIALECT,
+        ssl: true,
+        dialectOptions: {
+           ssl: {
+              require: true
+           }
+         }        
+      },      
     ));
 
 fs.readdirSync(__dirname)
