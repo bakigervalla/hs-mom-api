@@ -16,10 +16,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "bakige",
+    "username": "postgresql",
     "password": "7ZehckrJQsH9",
     "database": "hsdashboard",
-    "host": "ep-icy-art-708792.eu-central-1.aws.neon.tech",
+    "host": "dpg-cfnp6i5a499f28d2vjkg-a.frankfurt-postgres.render.com",
     "port": "5432",
     "dialect": "postgres"
   }

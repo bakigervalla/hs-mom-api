@@ -8,12 +8,10 @@ var env = process.env.NODE_ENV?.trim() || "development";
 var config = require(path.join(__dirname, "../config/config.json"))[env];
 var db = {};
 
-// console.log(process.env.DB_HOST);
-var sequelize = process.env.DATABASE_URL
-  ? // sequelize = new Sequelize(process.env.DATABASE_URL, {
-    //     dialect: 'postgres'
-    // });
-    (sequelize = new Sequelize(
+// console.log(process.env.DIALECT);
+// console.log(process.env.NODE_ENV)
+var sequelize = process.env.DB_HOST && process.env.NODE_ENV != "development"
+  ? (sequelize = new Sequelize(
       process.env.DB_NAME,
       process.env.USER_NAME,
       process.env.PASSWORD,
@@ -36,7 +34,6 @@ var sequelize = process.env.DATABASE_URL
       {
         host: process.env.DB_HOST,
         dialect: process.env.DIALECT,
-        ssl: {require:true},
         dialectOptions: {
            ssl: {
               require: {require:true}
