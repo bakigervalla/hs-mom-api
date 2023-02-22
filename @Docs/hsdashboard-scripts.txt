@@ -1,0 +1,180 @@
+-- public.pages definition
+
+-- Drop table
+
+-- DROP TABLE public.pages;
+
+CREATE TABLE public.pages (
+	id serial4 NOT NULL,
+	user_id int4 NOT NULL,
+	app_id int4 NULL,
+	account_id text NULL,
+	user_token text NULL,
+	page_id varchar NOT NULL,
+	page_name varchar NULL,
+	page_token text NULL,
+	page_picture varchar NULL,
+	"default" bool NOT NULL DEFAULT false
+);
+CREATE UNIQUE INDEX pages_pageid_idx ON public.pages USING btree (page_id);
+
+
+-- public.subscription_plans definition
+
+-- Drop table
+
+-- DROP TABLE public.subscription_plans;
+
+CREATE TABLE public.subscription_plans (
+	id serial4 NOT NULL,
+	"name" text NOT NULL,
+	"period" int4 NULL,
+	price numeric NULL,
+	is_default bool NOT NULL,
+	is_active bool NOT NULL DEFAULT true,
+	create_date timestamp NOT NULL DEFAULT now(),
+	update_by text NULL,
+	update_date timestamp NOT NULL DEFAULT now(),
+	"order" numeric NULL DEFAULT 0,
+	is_popular bool NOT NULL DEFAULT false,
+	action_text varchar NULL,
+	offers text NULL,
+	extra_offers text NULL,
+	CONSTRAINT subscriptions_name_key UNIQUE (name),
+	CONSTRAINT subscriptions_pkey PRIMARY KEY (id)
+);
+
+
+-- public.users definition
+
+-- Drop table
+
+-- DROP TABLE public.users;
+
+CREATE TABLE public.users (
+	user_id serial4 NOT NULL,
+	email text NOT NULL,
+	"password" text NOT NULL,
+	"role" text NOT NULL,
+	first_name text NULL,
+	last_name text NULL,
+	address text NULL,
+	email_confirmed bool NOT NULL,
+	is_enabled bool NOT NULL DEFAULT true,
+	is_locked bool NOT NULL DEFAULT false,
+	lock_date text NULL,
+	create_date timestamp NOT NULL DEFAULT now(),
+	update_date timestamp NOT NULL DEFAULT now(),
+	email_confirm_token text NULL,
+	phone varchar NULL,
+	CONSTRAINT users_email_key UNIQUE (email),
+	CONSTRAINT users_pkey PRIMARY KEY (user_id)
+);
+
+
+-- public.apps definition
+
+-- Drop table
+
+-- DROP TABLE public.apps;
+
+CREATE TABLE public.apps (
+	app_id serial4 NOT NULL,
+	subscription_id int4 NOT NULL,
+	"name" text NOT NULL,
+	created_by text NULL,
+	create_date timestamp NOT NULL DEFAULT now(),
+	update_by text NULL,
+	update_date timestamp NOT NULL DEFAULT now(),
+	image text NULL,
+	order_seq numeric NOT NULL DEFAULT 0,
+	CONSTRAINT apps_pkey PRIMARY KEY (app_id),
+	CONSTRAINT apps_app_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.subscription_plans(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- public.clients definition
+
+-- Drop table
+
+-- DROP TABLE public.clients;
+
+CREATE TABLE public.clients (
+	client_id serial4 NOT NULL,
+	user_id int4 NOT NULL,
+	"name" text NOT NULL,
+	address text NULL,
+	country text NULL,
+	email text NULL,
+	phone text NULL,
+	client_uri text NULL,
+	logo_uri text NULL,
+	created_by text NULL,
+	create_date timestamp NOT NULL DEFAULT now(),
+	update_by text NULL,
+	update_date timestamp NOT NULL DEFAULT now(),
+	"default" bool NULL,
+	CONSTRAINT clients_pkey PRIMARY KEY (client_id),
+	CONSTRAINT users_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- public.dashboards definition
+
+-- Drop table
+
+-- DROP TABLE public.dashboards;
+
+CREATE TABLE public.dashboards (
+	id serial4 NOT NULL,
+	user_id int4 NOT NULL,
+	client_id int4 NOT NULL,
+	app_id serial4 NOT NULL,
+	title text NULL,
+	description text NULL,
+	is_active bool NOT NULL DEFAULT true,
+	is_default bool NULL DEFAULT true,
+	create_date timestamp NOT NULL DEFAULT now(),
+	update_date timestamp NULL DEFAULT now(),
+	CONSTRAINT dashboards_pkey PRIMARY KEY (id),
+	CONSTRAINT dashboard_app_id_fkey FOREIGN KEY (app_id) REFERENCES public.apps(app_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT dashboard_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT dashboard_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- public.orders definition
+
+-- Drop table
+
+-- DROP TABLE public.orders;
+
+CREATE TABLE public.orders (
+	order_id serial4 NOT NULL,
+	subscription_id int4 NOT NULL,
+	client_id int4 NOT NULL,
+	description text NULL,
+	status text NOT NULL DEFAULT 'active'::text,
+	created_by text NULL,
+	create_date timestamp NOT NULL DEFAULT now(),
+	update_by text NULL,
+	update_date timestamp NOT NULL DEFAULT now(),
+	CONSTRAINT orders_pkey PRIMARY KEY (order_id),
+	CONSTRAINT orders_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(client_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT orders_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.subscription_plans(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- public.order_details definition
+
+-- Drop table
+
+-- DROP TABLE public.order_details;
+
+CREATE TABLE public.order_details (
+	id serial4 NOT NULL,
+	order_id int4 NOT NULL,
+	app_id int4 NULL,
+	CONSTRAINT order_details_pkey PRIMARY KEY (id),
+	CONSTRAINT order_details_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(order_id) ON DELETE CASCADE ON UPDATE CASCADE
+);

@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "Meteor857",
+    "database": "hsdashboard",
+    "host": "127.0.0.1",
+    "port": "5432",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "12345678",
+    "database": "hsdashboard",
+    "host": "127.0.0.1",
+    "port": "5432",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "bakige",
+    "password": "7ZehckrJQsH9",
+    "database": "hsdashboard",
+    "host": "ep-icy-art-708792.eu-central-1.aws.neon.tech",
+    "port": "5432",
+    "dialect": "postgres"
+  }
+}
