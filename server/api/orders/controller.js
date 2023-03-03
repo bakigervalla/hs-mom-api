@@ -47,31 +47,38 @@ exports.saveOrder = async (req, res) => {
 
 exports.insertOrder = async (newOrder, apps) => {
   return await Order.create(newOrder)
-    .then(async (data) => {
-      // save order details
-      let newApps = apps.map((itm) => {
-        return {
-          order_id: data.order_id,
-          app_id: itm.app_id,
-          app_token: "",
-        };
-      });
+            .then((data) => {
+              return { status: 200, data: data };
+          })
+          .catch((err) => {
+            console.log(err.message);
+              return { status: 400, error: "Faield to insert order" };
+          });
 
-      var result = await OrderDetail.bulkCreate(newApps)
-        .then((response) => {
-          return !response || response.length === 0
-            ? { status: 400, error: "Failed to store order details." }
-            : { status: 200, data: response };
-        })
-        .catch((err) => {
-          return { status: 400, error: err.message };
-        });
+      // // save order details
+      // let newApps = apps.map((itm) => {
+      //   return {
+      //     order_id: data.order_id,
+      //     app_id: itm.app_id,
+      //     app_token: "",
+      //   };
+      // });
 
-      return result;
-    })
-    .catch((err) => {
-      return { status: 400, error: err.message };
-    });
+      // var result = await OrderDetail.bulkCreate(newApps)
+      //   .then((response) => {
+      //     return !response || response.length === 0
+      //       ? { status: 400, error: "Failed to store order details." }
+      //       : { status: 200, data: response };
+      //   })
+      //   .catch((err) => {
+      //     return { status: 400, error: err.message };
+      //   });
+
+    //   return result;
+    // })
+    // .catch((err) => {
+    //   return { status: 400, error: err.message };
+    // });
 };
 
 exports.setActiveApp = (req, res) => {
