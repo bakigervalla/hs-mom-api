@@ -90,45 +90,37 @@ exports.createUser = (req, res) => {
           // get current user
           let authUserId = data.user_id;
 
-          // add self as new client
-          let newClient = {
-            user_id: data.user_id,
-            name: data.email.replace(/@.*$/, ""),
-            email: data.email,
-            created_by: authUserId,
-            update_by: authUserId,
-            default: true,
-          };
-          let client = await CrtClient.insertClient(newClient);
+          // create a new client for this user
+          let client = await CrtClient.insertClient({
+                                  user_id: data.user_id,
+                                  name: data.email.replace(/@.*$/, ""),
+                                  email: data.email,
+                                  created_by: authUserId,
+                                  update_by: authUserId,
+                                  default: true
+                                });
+
           if (client.status !== 200)
             return res.status(client.status).send({ error: client.error });
 
           // get default (free) subscription apps if user has chosen free subscription during registration
-          let subscription = await CrtSubscription.getSubscription(
-            subscription_id
-          );
+          let subscription = await CrtSubscription.getSubscription(subscription_id);
 
           if (subscription.status !== 200)
             return res
               .status(subscription.status)
               .send({ error: subscription.error });
 
-          // create and save order
-          let newOrder = {
-            subscription_id: subscription.data.id,
-            user_id: data.user_id,
-            //client_id: client.data.client_id,
-            description: "Order created on user registration",
-            status: true,
-            created_by: authUserId,
-            update_by: authUserId,
-          };
-
-          // add default or chosen subscription_plan
-          var result = await CrtOrder.insertOrder(
-            newOrder,
-            subscription.data.Apps
-          );
+          // create new purchase order
+          var result = await CrtOrder.insertOrder({
+                                  subscription_id: subscription.data.id,
+                                  user_id: data.user_id,
+                                  description: `Purchased on ${new Date()}`,
+                                  status: true,
+                                  created_by: authUserId,
+                                  update_by: authUserId,
+                                },
+                               subscription.data.Apps);
 
           return result.status === 200
             ? res.status(result.status).send(Object.assign(signToken(data)))

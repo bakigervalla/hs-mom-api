@@ -8,7 +8,7 @@ exports.getApps = (req, res) => {
   })
     .then((apps) => {
       if (apps.length === 0) {
-        return res.status(400).send("No Apps");
+        return res.status(200).send("No Apps");
       }
       return res.json(apps);
     })
@@ -57,7 +57,7 @@ exports.getAppsBySubscription = async (subscription_id) => {
   })
     .then((apps) => {
       if (apps.length === 0) {
-        return { status: 400, error: "No Apps" };
+        return { status: 200, error: "No Apps" };
       }
       return { status: 200, data: apps };
     })

@@ -180,7 +180,7 @@ exports.setActivePage = (req, res) => {
   let app_id = req.body.app_id,
       page_id = req.body.page_id;
   const sql = `UPDATE pages SET "default" = false WHERE app_id = ${app_id} AND user_id = ${user_id}; 
-               UPDATE pages SET "default" = true WHERE id = ${page_id} AND user_id = ${user_id};`;
+               UPDATE pages SET "default" = true WHERE app_id = ${app_id} AND  page_id = '${page_id}' AND user_id = ${user_id};`;
 
   return db.sequelize
     .query(sql, {
